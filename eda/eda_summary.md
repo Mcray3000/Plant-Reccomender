@@ -22,6 +22,7 @@ My goal is to build a recommender that can function in two ways:
 My EDA process was heavily focused on data cleaning and a little bit of feature engineering the raw data into a usable format for the recommender.
 
 * **Significant Data Cleaning Was Required:** The primary finding was that the raw data was unusable in its original state. Key features like `light_level`, `humidity_need`, and `temp_tolerance` were stored as text or ranges (e.g., "1-3", "Bright indirect"). These all had to be standardized. There was lots of weirdness in the different representations of 1-3, 1,3, 1_3
+![alt text](image-3.png)
 
 * **Manual Features Were Needed:** Two main columns for a recommender were extremely sparse. `is_toxic` and `has_flowers` were almost entirely `NULL`. For has_flowers I place these features by manually mapping keywords (e.g., "Sansevieria," "Fern") from the `scientific_name` and `Family` columns to create 0/1 binary features. For this is_toxic I mapped assumed NULL is safe and trusted the ones marked as toxic, may need more review.
 
@@ -29,9 +30,14 @@ My EDA process was heavily focused on data cleaning and a little bit of feature 
     * The features are not uniformly distributed. Most plants in the dataset (avg 2.22) prefer **medium, indirect light**.
     * The `is_toxic` feature is **highly imbalanced**. Only 2% of the plants in the dataset are labeled as toxic (avg 0.02). I may drop it.
 
+    ![alt text](image-2.png)
+
 * **Relationships:**
-    * The correlation heatmap revealed a **strong correlation** between `light_level` and `water_need`.
+    * The correlation heatmap revealed a some correlation between `light_level` and `water_need`. Also some much stronger correlations between `water_need` and `humidity`.
+    ![alt text](image.png)
+
     * The boxplot confirmed this: high-light plants (like succulents, `light_level` = 1.0) are strongly associated with medium-to-low water needs (`water_need` = 2 or 3). This felt like it really validated my data, at least a little :)
+    ![alt text](image-1.png)
 
 ## 3. What issues or open questions remain?
 
