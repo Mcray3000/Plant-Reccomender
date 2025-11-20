@@ -207,4 +207,4 @@ marimo/_lsp/
 __marimo__/
 
 recommended_images/*
-evaluation_outputs/*
+# evaluation_outputs/*
