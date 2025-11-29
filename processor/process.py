@@ -54,7 +54,7 @@ def clean_temp_col(col_name):
 def main():
     script_dir = Path(__file__).parent
     src = script_dir.parent / "raw_data"
-    dst = script_dir.parent / "touched_data"
+    dst = script_dir.parent / "processed_data"
 
     trust_path = src / "trustworthy_plants.xlsx"
     sketch_path = src / "sketch_plants.csv"
