@@ -1,0 +1,29 @@
+[tool.ruff]
+# Set the maximum line length
+line-length = 120
+
+# Ruff's formatter is designed to be a drop-in replacement for Black.
+# This section configures the Formatter.
+[tool.ruff.format]
+# Enforce double quotes (") just like Black does.
+# You could also set this to "single" (') if you prefer.
+quote-style = "double"
+
+# Format code snippets in docstrings
+docstring-code-format = true
+
+
+# This section configures the Linter.
+[tool.ruff.lint]
+# Select a good set of default rules to check for:
+# E/W: pycodestyle errors and warnings
+# F: Pyflakes (catches bugs like unused variables)
+# I: isort (sorts your imports)
+# UP: pyupgrade (suggests modern Python syntax)
+select = ["E", "W", "F", "I", "UP"]
+
+# You can add rules to ignore here if they get annoying
+# ignore = ["E501"] # Example: ignore "line too long"
+
+# Allow ruff to autofix as many issues as possible
+fixable = ["ALL"]

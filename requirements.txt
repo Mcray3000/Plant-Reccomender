@@ -6,3 +6,9 @@ matplotlib==3.9.4
 seaborn==0.13.2
 pandas==2.3.3
 numpy==2.0.2
+scikit-learn==1.6.1
+requests
+beautifulsoup4
+umap-learn
+plotly
+kaleido
