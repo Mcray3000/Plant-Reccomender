@@ -12,3 +12,4 @@ beautifulsoup4
 umap-learn
 plotly
 kaleido
+flask==3.0.0

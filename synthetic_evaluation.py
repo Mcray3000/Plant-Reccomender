@@ -515,6 +515,113 @@ def plot_metrics_comparison(q_alignment, i_alignment):
     
     return fig
 
+def plot_presentation_slide4(q_alignment, i_alignment):
+    """
+    Create presentation-ready chart for Slide 4:
+    - Two bar charts: Precision@3 and MAP@3
+    - Questionnaire: Random vs Heuristic only
+    - Item-based: Random vs KNN only
+    """
+    metrics = ['precision', 'map']
+    metric_labels = ['Precision@3', 'MAP@3']
+    
+    fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+    fig.set_facecolor(BG_COLOR)
+    
+    # Add main title
+    # fig.suptitle('Two Paths: Different Trade-offs', 
+    #              color=TEXT_COLOR, fontsize=24, fontweight='bold', y=0.98)
+    
+    for idx, (metric, label) in enumerate(zip(metrics, metric_labels)):
+        ax = axes[idx]
+        ax.set_facecolor(BG_COLOR)
+        
+        # Prepare data
+        model_names = []
+        scores = []
+        colors = []
+        
+        # Questionnaire: Random + Heuristic only
+        if 'Random' in q_alignment and q_alignment['Random'][metric]:
+            model_names.append('Random\n(Questionnaire)')
+            scores.append(np.mean(q_alignment['Random'][metric]))
+            colors.append(PLOT_COLOR)  # Brown for baseline
+            
+        if 'Heuristic' in q_alignment and q_alignment['Heuristic'][metric]:
+            model_names.append('Heuristic\n(Questionnaire)')
+            scores.append(np.mean(q_alignment['Heuristic'][metric]))
+            colors.append('#1B5234')  # Dark green
+        
+        # Item-based: Random + KNN only
+        # if 'Random' in i_alignment and i_alignment['Random'][metric]:
+        #     model_names.append('Random\n(Item-Based)')
+        #     scores.append(np.mean(i_alignment['Random'][metric]))
+        #     colors.append(PLOT_COLOR)  # Brown for baseline
+            
+        # if 'KNN' in i_alignment and i_alignment['KNN'][metric]:
+        #     model_names.append('KNN\n(Item-Based)')
+        #     scores.append(np.mean(i_alignment['KNN'][metric]))
+        #     colors.append('#1B5234')  # Bright green
+        
+        # Create bar plot
+        bars = ax.bar(range(len(model_names)), scores, color=colors, 
+                      alpha=0.9, edgecolor=TEXT_COLOR, linewidth=2)
+        
+        
+        # Styling
+        ax.set_xticks(range(len(model_names)))
+        ax.set_xticklabels(model_names, color=TEXT_COLOR, fontsize=14, fontweight='bold')
+        ax.set_ylabel(label, color=TEXT_COLOR, fontsize=16, fontweight='bold')
+        ax.set_title(f'{label}', color=TEXT_COLOR, fontsize=18, fontweight='bold', pad=15)
+        ax.tick_params(colors=TEXT_COLOR, which='both', labelsize=12)
+        ax.grid(True, alpha=0.15, color=TEXT_COLOR, axis='y')
+        ax.set_ylim(0, 1.0)  # Set 0-100% scale
+        
+        for spine in ax.spines.values():
+            spine.set_edgecolor(TEXT_COLOR)
+            spine.set_linewidth(2)
+        
+        # Add value labels on bars with improvement multipliers
+        for i, (bar, score) in enumerate(zip(bars, scores)):
+            height = bar.get_height()
+            # Show percentage
+            ax.text(bar.get_x() + bar.get_width()/2., height + 0.03,
+                   f'{score*100:.1f}%',
+                   ha='center', va='bottom', color=TEXT_COLOR, 
+                   fontsize=14, fontweight='bold')
+            
+            # # Add improvement multiplier for non-random models
+            # if 'Random' not in model_names[i]:
+            #     # Find corresponding random baseline
+            #     if 'Questionnaire' in model_names[i]:
+            #         baseline = scores[0]  # First random (questionnaire)
+            #     else:
+            #         baseline = scores[2] if len(scores) > 2 else scores[0]  # Item-based random
+                
+            #     if baseline > 0:
+            #         improvement = score / baseline
+            #         ax.text(bar.get_x() + bar.get_width()/2., height/2,
+            #                f'{improvement:.1f}x\nbetter',
+            #                ha='center', va='center', color='white', 
+            #                fontsize=11, fontweight='bold',
+            #                bbox=dict(boxstyle='round,pad=0.3', 
+            #                        facecolor='black', alpha=0.6, edgecolor='none'))
+    
+    # Add subtitle explaining the split
+    # fig.text(0.5, 0.02, 
+    #         'Beginner (Questionnaire) vs Plant Parent (Item-Based) | Tested on 150 Synthetic Users',
+    #         ha='center', color=TEXT_COLOR, fontsize=14, style='italic')
+    
+    plt.tight_layout(rect=[0, 0.04, 1, 0.96])
+    
+    # Save
+    os.makedirs('evaluation_outputs/visualizations', exist_ok=True)
+    plt.savefig('evaluation_outputs/visualizations/slide_4_presentation.png', 
+                facecolor=BG_COLOR, dpi=200, bbox_inches='tight')
+    print("  Saved: evaluation_outputs/visualizations/slide_4_presentation.png")
+    
+    return fig
+
 def plot_coverage_comparison(coverage_results):
     """
     Create bar chart for coverage comparison.
@@ -693,6 +800,10 @@ def run_full_evaluation(n_users=150):
     plot_mse_comparison_all(q_alignment, i_alignment)
     plot_metrics_comparison(q_alignment, i_alignment)
     plot_coverage_comparison(coverage_results)
+    
+    # Generate presentation slide
+    print("\nGenerating presentation slide (Slide 4)...")
+    plot_presentation_slide4(q_alignment, i_alignment)
     
     # Write summary to file
     os.makedirs('evaluation_outputs/summaries', exist_ok=True)

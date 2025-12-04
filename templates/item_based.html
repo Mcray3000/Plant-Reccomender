@@ -1,0 +1,635 @@
+{% extends "base.html" %}
+
+{% block title %}Item-Based - Plant Recommender{% endblock %}
+
+{% block extra_css %}
+<style>
+    .plant-selector-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .plant-list-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .plant-list-section h3 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .plant-search {
+        margin-bottom: 15px;
+    }
+
+    .plant-search input {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .plant-scroll-list {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        height: 400px;
+        overflow-y: auto;
+        background: white;
+    }
+
+    .plant-scroll-item {
+        padding: 12px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .plant-scroll-item:hover {
+        background: #f5f5f5;
+        padding-left: 16px;
+    }
+
+    .plant-scroll-item.selected {
+        background: #667eea;
+        color: white;
+    }
+
+    .plant-item-text {
+        flex: 1;
+    }
+
+    .plant-item-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .plant-item-scientific {
+        font-size: 0.85rem;
+        opacity: 0.7;
+        font-style: italic;
+    }
+
+    .plant-checkbox {
+        margin-left: 10px;
+        width: 20px;
+        height: 20px;
+        accent-color: #667eea;
+    }
+
+    .plant-preview-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .plant-preview-section h3 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .plant-preview-box {
+        border: 2px dashed #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #f9f9f9;
+    }
+
+    .plant-preview-image {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        object-fit: cover;
+    }
+
+    .plant-preview-info {
+        text-align: left;
+        width: 100%;
+    }
+
+    .plant-preview-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .plant-preview-scientific {
+        font-size: 0.95rem;
+        color: #777;
+        font-style: italic;
+        margin-bottom: 12px;
+    }
+
+    .plant-care-preview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .care-item-preview {
+        background: white;
+        padding: 8px;
+        border-radius: 6px;
+        border-left: 3px solid #f5576c;
+        font-size: 0.85rem;
+    }
+
+    .care-label-preview {
+        font-size: 0.75rem;
+        color: #666;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .care-value-preview {
+        font-size: 0.95rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .selected-plants-summary {
+        background: #f0f0f0;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .selected-plants-summary h4 {
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .selected-plant-tag {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .selected-plant-tag .remove {
+        cursor: pointer;
+        margin-left: 6px;
+        font-weight: bold;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .recommendations {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .plant-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .plant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .plant-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        background: #e0e0e0;
+    }
+
+    .plant-info {
+        padding: 20px;
+    }
+
+    .plant-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .plant-scientific {
+        font-size: 0.95rem;
+        color: #777;
+        font-style: italic;
+        margin-bottom: 15px;
+    }
+
+    .care-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .care-item {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        border-left: 3px solid #f5576c;
+    }
+
+    .care-label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .care-value {
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .care-info {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #555;
+        margin-top: 15px;
+    }
+
+    .badges {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #f5576c;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge.flower {
+        background: #f5576c;
+    }
+
+    .badge.toxic {
+        background: #e74c3c;
+    }
+
+    .badge.safe {
+        background: #27ae60;
+    }
+
+    .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        color: #667eea;
+    }
+
+    .loading::after {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .error {
+        color: #e74c3c;
+        padding: 15px;
+        background: #fadbd8;
+        border-radius: 8px;
+        border-left: 4px solid #e74c3c;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 1024px) {
+        .plant-selector-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Find Plants Similar to What You Have</h2>
+<p style="color: #666; margin-bottom: 30px;">Select your plants from the list and see their photos, then get personalized recommendations.</p>
+
+<form id="itemBasedForm">
+    <div class="plant-selector-container">
+        <!-- Plant List -->
+        <div class="plant-list-section">
+            <h3>📚 All Available Plants</h3>
+            <div class="plant-search">
+                <input type="text" id="plantFilterInput" placeholder="Search plants..." autocomplete="off">
+            </div>
+            <div class="plant-scroll-list" id="plantScrollList"></div>
+        </div>
+
+        <!-- Preview -->
+        <div class="plant-preview-section">
+            <h3>👁️ Plant Preview</h3>
+            <div class="plant-preview-box" id="previewBox">
+                <p style="color: #999;">Click a plant to see its photo</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selected Plants Summary -->
+    <div class="selected-plants-summary" id="selectedSummary" style="display: none;">
+        <h4>Selected Plants:</h4>
+        <div id="selectedPlantsDiv"></div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="flowers">🌸 Flowering Plants</label>
+            <select id="flowers" name="flowers" required>
+                <option value="Dont Care">Don't Care</option>
+                <option value="Yes">I'd Love Flowers</option>
+                <option value="No">No Flowers, Please</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="toxic">🐾 Pet Safety</label>
+            <select id="toxic" name="toxic" required>
+                <option value="Dont Care">Don't Care</option>
+                <option value="No">Non-Toxic Only</option>
+                <option value="Yes">Toxicity OK</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="model">🤖 Recommendation Model</label>
+            <select id="model" name="model" required>
+                <option value="knn">KNN (Similar Plants)</option>
+                <option value="random">Random (Surprise Me!)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="btn btn-primary">Get Recommendations 🌱</button>
+        <button type="reset" class="btn btn-secondary">Clear Form</button>
+    </div>
+</form>
+
+<div id="loadingDiv" class="loading" style="margin-top: 30px;"></div>
+<div id="errorDiv" style="margin-top: 30px;"></div>
+
+<div id="recommendationsDiv" style="display: none; margin-top: 40px;">
+    <h2 style="margin-bottom: 20px; color: #333;">✨ We Think You'll Love These</h2>
+    <div id="recommendationsContainer" class="recommendations"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedPlants = [];
+let allPlants = [];
+
+// Load all plants on page load
+async function loadAllPlants() {
+    try {
+        const response = await fetch('/api/plants/all');
+        allPlants = await response.json();
+        displayPlantList(allPlants);
+    } catch (error) {
+        console.error('Error loading plants:', error);
+    }
+}
+
+function displayPlantList(plants) {
+    const listContainer = document.getElementById('plantScrollList');
+    listContainer.innerHTML = '';
+
+    plants.forEach(plant => {
+        const item = document.createElement('div');
+        item.className = 'plant-scroll-item';
+        item.id = `plant-${plant.scientific_name.replace(/\s+/g, '-')}`;
+
+        const isSelected = selectedPlants.some(p => p.scientific_name === plant.scientific_name);
+        if (isSelected) {
+            item.classList.add('selected');
+        }
+
+        item.innerHTML = `
+            <div class="plant-item-text">
+                <div class="plant-item-name">${plant.common_name}</div>
+                <div class="plant-item-scientific">${plant.scientific_name}</div>
+            </div>
+            <input type="checkbox" class="plant-checkbox" ${isSelected ? 'checked' : ''}>
+        `;
+
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            togglePlantSelection(plant, item);
+        });
+
+        listContainer.appendChild(item);
+    });
+}
+
+function togglePlantSelection(plant, itemElement) {
+    const index = selectedPlants.findIndex(p => p.scientific_name === plant.scientific_name);
+
+    if (index > -1) {
+        selectedPlants.splice(index, 1);
+        itemElement.classList.remove('selected');
+        itemElement.querySelector('.plant-checkbox').checked = false;
+    } else {
+        selectedPlants.push(plant);
+        itemElement.classList.add('selected');
+        itemElement.querySelector('.plant-checkbox').checked = true;
+        showPlantPreview(plant);
+    }
+
+    updateSelectedSummary();
+}
+
+function showPlantPreview(plant) {
+    const previewBox = document.getElementById('previewBox');
+    previewBox.innerHTML = `
+        <img src="${plant.image_url}" alt="${plant.common_name}" class="plant-preview-image">
+        <div class="plant-preview-info">
+            <div class="plant-preview-name">${plant.common_name}</div>
+            <div class="plant-preview-scientific">${plant.scientific_name}</div>
+            <div class="plant-care-preview">
+                <div class="care-item-preview">
+                    <div class="care-label-preview">💡 Light</div>
+                    <div class="care-value-preview">${plant.light_level}</div>
+                </div>
+                <div class="care-item-preview">
+                    <div class="care-label-preview">💧 Water</div>
+                    <div class="care-value-preview">${plant.water_need}</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function updateSelectedSummary() {
+    const summary = document.getElementById('selectedSummary');
+    const selectedDiv = document.getElementById('selectedPlantsDiv');
+
+    if (selectedPlants.length === 0) {
+        summary.style.display = 'none';
+        selectedDiv.innerHTML = '';
+    } else {
+        summary.style.display = 'block';
+        selectedDiv.innerHTML = selectedPlants.map(p => `
+            <span class="selected-plant-tag">
+                ${p.common_name} (${p.scientific_name})
+                <span class="remove" onclick="removeFromSelection('${p.scientific_name.replace(/'/g, "\\'")}')">✕</span>
+            </span>
+        `).join('');
+    }
+}
+
+function removeFromSelection(scientificName) {
+    selectedPlants = selectedPlants.filter(p => p.scientific_name !== scientificName);
+    const itemId = `plant-${scientificName.replace(/\s+/g, '-')}`;
+    const itemElement = document.getElementById(itemId);
+    if (itemElement) {
+        itemElement.classList.remove('selected');
+        itemElement.querySelector('.plant-checkbox').checked = false;
+    }
+    updateSelectedSummary();
+}
+
+// Plant search filter
+document.getElementById('plantFilterInput').addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const filtered = allPlants.filter(p =>
+        p.common_name.toLowerCase().includes(query) ||
+        p.scientific_name.toLowerCase().includes(query)
+    );
+    displayPlantList(filtered);
+});
+
+// Form submission
+document.getElementById('itemBasedForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (selectedPlants.length === 0) {
+        document.getElementById('errorDiv').innerHTML = '<div class="error">Please select at least one plant</div>';
+        return;
+    }
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    data.plants = selectedPlants.map(p => p.scientific_name);
+
+    document.getElementById('loadingDiv').style.display = 'block';
+    document.getElementById('errorDiv').innerHTML = '';
+    document.getElementById('recommendationsDiv').style.display = 'none';
+
+    try {
+        const response = await fetch('/api/recommend/item-based', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        document.getElementById('loadingDiv').style.display = 'none';
+
+        if (result.success) {
+            displayRecommendations(result.plants);
+            document.getElementById('recommendationsDiv').style.display = 'block';
+        } else {
+            document.getElementById('errorDiv').innerHTML = `<div class="error">Error: ${result.error}</div>`;
+        }
+    } catch (error) {
+        document.getElementById('loadingDiv').style.display = 'none';
+        document.getElementById('errorDiv').innerHTML = `<div class="error">Error: ${error.message}</div>`;
+    }
+});
+
+function displayRecommendations(plants) {
+    const container = document.getElementById('recommendationsContainer');
+    container.innerHTML = '';
+
+    plants.forEach(plant => {
+        const card = document.createElement('div');
+        card.className = 'plant-card';
+        card.innerHTML = `
+            <img src="${plant.image_url}" alt="${plant.common_name}" class="plant-image">
+            <div class="plant-info">
+                <div class="plant-name">${plant.common_name}</div>
+                <div class="plant-scientific">${plant.scientific_name}</div>
+                
+                <div class="care-grid">
+                    <div class="care-item">
+                        <div class="care-label">💡 Light</div>
+                        <div class="care-value">${plant.light_level}</div>
+                    </div>
+                    <div class="care-item">
+                        <div class="care-label">💧 Water</div>
+                        <div class="care-value">${plant.water_need}</div>
+                    </div>
+                    <div class="care-item">
+                        <div class="care-label">💨 Humidity</div>
+                        <div class="care-value">${plant.humidity_need}</div>
+                    </div>
+                    <div class="care-item">
+                        <div class="care-label">🌡️ Temp</div>
+                        <div class="care-value">${plant.temp_tolerance}</div>
+                    </div>
+                </div>
+
+                <div class="badges">
+                    <span class="badge ${plant.flowers === 'Yes' ? 'flower' : ''}">${plant.flowers === 'Yes' ? '🌸 Flowers' : '🍃 No Flowers'}</span>
+                    <span class="badge ${plant.is_toxic === 'Yes' ? 'toxic' : 'safe'}">${plant.is_toxic === 'Yes' ? '⚠️ Toxic' : 'Pet Safe'}</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Load plants when page loads
+loadAllPlants();
+</script>
+{% endblock %}

@@ -69,7 +69,7 @@ class KNNRecommender(BaseRecommender):
             recommendations = recommendations.filter(pl.col("has_flowers") == 0)
 
         toxic = inputs.get("toxic")
-        if toxic == "No":
+        if toxic == "Yes":
             recommendations = recommendations.filter(pl.col("is_toxic") == 0)
 
         return recommendations.head(top_k)

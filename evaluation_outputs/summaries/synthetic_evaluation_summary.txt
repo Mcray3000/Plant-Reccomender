@@ -1,6 +1,6 @@
 ================================================================================
 SYNTHETIC EVALUATION SUMMARY - ALL MODELS
-Timestamp: 2025-11-19 22:52:43
+Timestamp: 2025-12-03 07:43:46
 Number of Synthetic Users: 150
 Evaluation at k=3 recommendations
 ================================================================================
@@ -9,31 +9,31 @@ QUESTIONNAIRE MODELS:
 --------------------------------------------------------------------------------
 Model           MSE      P@3      R@3      MAP@3    NDCG@3  
 --------------------------------------------------------------------------------
-Heuristic       0.3273   0.398    0.040    0.359    0.786   
-Random Forest   0.9030   0.073    0.007    0.050    0.630   
-Random          0.5222   0.113    0.011    0.070    0.691   
+Heuristic       0.3594   0.416    0.042    0.365    0.787   
+Random Forest   1.0082   0.056    0.006    0.038    0.617   
+Random          0.5410   0.116    0.012    0.079    0.701   
 
 ITEM-BASED MODELS:
 --------------------------------------------------------------------------------
 Model           MSE      P@3      R@3      MAP@3    NDCG@3  
 --------------------------------------------------------------------------------
-KNN             0.2141   0.840    0.084    0.829    0.943   
-Content-Based   0.2604   0.709    0.071    0.674    0.903   
-Random          0.5676   0.116    0.012    0.078    0.695   
+KNN             0.1776   0.853    0.085    0.850    0.940   
+Content-Based   0.2528   0.698    0.070    0.668    0.890   
+Random          0.4929   0.127    0.013    0.083    0.699   
 
 CATALOG COVERAGE:
 --------------------------------------------------------------------------------
-Heuristic       195/250 (78.0%)
-Random Forest   178/250 (71.2%)
-KNN             105/250 (42.0%)
-Content-Based   104/250 (41.6%)
-Random          238/250 (95.2%)
+Heuristic       193/250 (77.2%)
+Random Forest   170/250 (68.0%)
+KNN             102/250 (40.8%)
+Content-Based   102/250 (40.8%)
+Random          232/250 (92.8%)
 
 ================================================================================
 KEY FINDINGS:
 --------------------------------------------------------------------------------
-Best Questionnaire Model (Precision@3): Heuristic (0.398)
-Best Questionnaire Model (NDCG@3):      Heuristic (0.786)
-Best Item-Based Model (Precision@3):    KNN (0.840)
-Best Item-Based Model (NDCG@3):         KNN (0.943)
-Best Coverage:                           Random (95.2%)
+Best Questionnaire Model (Precision@3): Heuristic (0.416)
+Best Questionnaire Model (NDCG@3):      Heuristic (0.787)
+Best Item-Based Model (Precision@3):    KNN (0.853)
+Best Item-Based Model (NDCG@3):         KNN (0.940)
+Best Coverage:                           Random (92.8%)

@@ -58,7 +58,7 @@ class HeuristicRecommender(BaseRecommender):
             filtered_df = filtered_df.filter(pl.col("has_flowers") == 0)
 
         toxic = inputs.get("toxic")
-        if toxic == "No":
+        if toxic == "Yes":
             filtered_df = filtered_df.filter(pl.col("is_toxic") == 0)
 
         # If we have more than top_k, sample randomly or take top

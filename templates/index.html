@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Plant Recommender{% endblock %}
+
+{% block content %}
+<div style="text-align: center;">
+    <h2 style="color: #333; margin-bottom: 30px;">Welcome to Plant Recommender!</h2>
+    
+    <p style="font-size: 1.1rem; color: #666; margin-bottom: 40px; line-height: 1.6;">
+        Discover the perfect plants for your home with my recommendation system.
+        Choose your path below:
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px;">
+        <!-- Questionnaire Flow -->
+        <div style="padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3); color: white; text-align: left;">
+            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">📝 Answer a Questionnaire</h3>
+            <p style="margin-bottom: 20px; opacity: 0.9;">
+                Where do you want the plant? Living space, light conditions, and care capacity. You'll be recommended plants that match your needs.
+            </p>
+            <ul style="margin-bottom: 25px; opacity: 0.9; line-height: 1.8;">
+                <li>Light availability</li>
+                <li>Care capacity</li>
+                <li>Room type</li>
+                <li>Flower preference</li>
+                <li>Pet toxicity concerns</li>
+            </ul>
+            <a href="/questionnaire" class="btn btn-primary" style="display: inline-block; background: white; color: #667eea; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600;">Start Questionnaire →</a>
+        </div>
+
+        <!-- Item-Based Flow -->
+        <div style="padding: 30px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 15px; box-shadow: 0 6px 20px rgba(245, 87, 108, 0.3); color: white; text-align: left;">
+            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">🌱 I Already Have Plants</h3>
+            <p style="margin-bottom: 20px; opacity: 0.9;">
+                What plant/s do you already own. You'll be suggested similar plants that would complement your collection.
+            </p>
+            <ul style="margin-bottom: 25px; opacity: 0.9; line-height: 1.8;">
+                <li>Based on existing plants</li>
+                <li>Similar characteristics</li>
+                <li>Complementary species</li>
+                <li>Refined by your preferences</li>
+                <li>Smart matching algorithm</li>
+            </ul>
+            <a href="/item-based" class="btn btn-primary" style="display: inline-block; background: white; color: #f5576c; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600;">Find Similar Plants →</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

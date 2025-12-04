@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Questionnaire - Plant Recommender{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .recommendations {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .plant-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .plant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .plant-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        background: #e0e0e0;
+    }
+
+    .plant-info {
+        padding: 20px;
+    }
+
+    .plant-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .plant-scientific {
+        font-size: 0.95rem;
+        color: #777;
+        font-style: italic;
+        margin-bottom: 15px;
+    }
+
+    .care-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .care-item {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        border-left: 3px solid #667eea;
+    }
+
+    .care-label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .care-value {
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .care-info {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #555;
+        margin-top: 15px;
+    }
+
+    .badges {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #667eea;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge.flower {
+        background: #f5576c;
+    }
+
+    .badge.toxic {
+        background: #e74c3c;
+    }
+
+    .badge.safe {
+        background: #27ae60;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Answer a Few Questions About Your Home</h2>
+<p style="color: #666; margin-bottom: 30px;">Where will your plant be living? You'll be recommended plants that are perfect for you.</p>
+
+<form id="questionnaireForm">
+    <div class="form-row">
+        <div class="form-group">
+            <label for="light">🌞 Light Availability</label>
+            <select id="light" name="light" required>
+                <option value="Grow Light">Grow Light</option>
+                <option value="North">North</option>
+                <option value="North-West">North-West</option>
+                <option value="West">West</option>
+                <option value="South-West">South-West</option>
+                <option value="South">South</option>
+                <option value="South-East">South-East</option>
+                <option value="East">East</option>
+                <option value="North-East">North-East</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="care">🛠️ Care Capacity</label>
+            <select id="care" name="care" required>
+                <option value="Low">Low (I'm a beginner)</option>
+                <option value="Medium">Medium (Some plant experience)</option>
+                <option value="High">High (I love gardening)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="room">🏠 Room Type</label>
+            <select id="room" name="room" required>
+                <option value="Living Room">Living Room</option>
+                <option value="Bathroom">Bathroom</option>
+                <option value="Bedroom">Bedroom</option>
+                <option value="Kitchen">Kitchen</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="flowers">🌸 Flowering Plants</label>
+            <select id="flowers" name="flowers" required>
+                <option value="Dont Care">Don't Care</option>
+                <option value="Yes">I'd Love Flowers</option>
+                <option value="No">No Flowers, Please</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="toxic">🐾 Pet Safety</label>
+            <select id="toxic" name="toxic" required>
+                <option value="No">No Pets / Toxicity OK</option>
+                <option value="Yes">I Have Pets (Toxicity Not OK)</option>
+                <option value="Dont Care">Don't Care</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="model">🤖 Recommendation Model</label>
+            <select id="model" name="model" required>
+                <option value="heuristic">Heuristic (Fast & Reliable)</option>
+                <option value="random">Random (Surprise Me!)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="btn btn-primary">Get Recommendations 🌱</button>
+        <button type="reset" class="btn btn-secondary">Reset Form</button>
+    </div>
+</form>
+
+<div id="loadingDiv" class="loading" style="margin-top: 30px;"></div>
+<div id="errorDiv" style="margin-top: 30px;"></div>
+
+<div id="recommendationsDiv" style="display: none; margin-top: 40px;">
+    <h2 style="margin-bottom: 20px; color: #333;">✨ Your Perfect Plants</h2>
+    <div id="recommendationsContainer" class="recommendations"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('questionnaireForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+    document.getElementById('loadingDiv').style.display = 'block';
+    document.getElementById('errorDiv').innerHTML = '';
+    document.getElementById('recommendationsDiv').style.display = 'none';
+
+    try {
+        const response = await fetch('/api/recommend/questionnaire', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        document.getElementById('loadingDiv').style.display = 'none';
+
+        if (result.success) {
+            displayRecommendations(result.plants);
+            document.getElementById('recommendationsDiv').style.display = 'block';
+        } else {
+            document.getElementById('errorDiv').innerHTML = `<div class="error">Error: ${result.error}</div>`;
+        }
+    } catch (error) {
+        document.getElementById('loadingDiv').style.display = 'none';
+        document.getElementById('errorDiv').innerHTML = `<div class="error">Error: ${error.message}</div>`;
+    }
+});
+
+function displayRecommendations(plants) {
+    const container = document.getElementById('recommendationsContainer');
+    container.innerHTML = '';
+
+    plants.forEach(plant => {
+        const card = document.createElement('div');
+        card.className = 'plant-card';
+        card.innerHTML = `
+            <img src="${plant.image_url}" alt="${plant.common_name}" class="plant-image">
+            <div class="plant-info">
+                <div class="plant-name">${plant.common_name}</div>
+                <div class="plant-scientific">${plant.scientific_name}</div>
+                
+                <div class="care-grid">
+                    <div class="care-item">
+                        <div class="care-label">💡 Light</div>
+                        <div class="care-value">${plant.light_level}</div>
+                    </div>
+                    <div class="care-item">
+                        <div class="care-label">💧 Water</div>
+                        <div class="care-value">${plant.water_need}</div>
+                    </div>
+                    <div class="care-item">
+                        <div class="care-label">💨 Humidity</div>
+                        <div class="care-value">${plant.humidity_need}</div>
+                    </div>
+                    <div class="care-item">
+                        <div class="care-label">🌡️ Temp</div>
+                        <div class="care-value">${plant.temp_tolerance}</div>
+                    </div>
+                </div>
+
+                <div class="badges">
+                    <span class="badge ${plant.flowers === 'Yes' ? 'flower' : ''}">${plant.flowers === 'Yes' ? '🌸 Flowers' : '🍃 No Flowers'}</span>
+                    <span class="badge ${plant.is_toxic === 'Yes' ? 'toxic' : 'safe'}">${plant.is_toxic === 'Yes' ? '⚠️ Toxic' : 'Pet Safe'}</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+</script>
+{% endblock %}
